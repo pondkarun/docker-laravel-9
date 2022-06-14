@@ -1,0 +1,33 @@
+version: '3.9'
+
+networks:
+  web_network:
+    name: laravel9
+    driver: bridge
+
+services:
+
+  # PHP App Service 
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: laravel9-app
+    restart: always
+    volumes:
+      - ./src:/var/www
+    networks:
+      - web_network 
+
+  # Nginx Web Server Service
+  nginx:
+    image: nginx:1.19.8-alpine
+    container_name: laravel9_nginx
+    volumes:
+      - ./src:/var/www
+      - ./nginx/conf:/etc/nginx/conf.d
+    ports:
+      - "8200:80"
+    restart: always
+    networks:
+      - web_network
